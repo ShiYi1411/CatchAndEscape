@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Steal and Escape</title>
+  <link href="/styles/global.css" type="text/css" rel="stylesheet">
+  <link href="/styles/TextMessage.css" type="text/css" rel="stylesheet">
+
+  <style>
+    /* Menu styles */
+    .game-menu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: none;
+      /* Inherit dimensions from game container */
+      width: 100%;
+      /* Set width to 100% */
+      height: 100%;
+      /* Set height to 100% */
+      max-width: 352px;
+      /* Set max-width to match game canvas width */
+      max-height: 198px;
+      /* Set max-height to match game canvas height */
+
+    }
+
+    .game-menu h1 {
+      margin-bottom: 10px;
+    }
+
+    .game-menu button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+    }
+
+    .game-menu button:hover {
+      background-color: #2980b9;
+    }
+
+    /* Title text style */
+    .title-text {
+      font-size: 35px;
+      font-weight: bold;
+      margin-top: 1px;
+    }
+
+     /* Game end screen styles */
+     #game-end-screen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: white; /* Set the background color to white */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: none;
+      width: 352px; /* Set width to match game container width */
+      height: 198px; /* Set height to match game container height */
+    }
+
+    #game-end-screen button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      background-color: red;
+      color: white;
+      border-radius: 5px;
+      width: 100px; /* Set button width */
+    }
+
+    #game-end-screen button:hover {
+      background-color: #2980b9;
+    }
+
+    
+     /* Game end screen styles */
+     #game-win-screen {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background-color: white; /* Set the background color to white */
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+      display: none;
+      width: 352px; /* Set width to match game container width */
+      height: 198px; /* Set height to match game container height */
+    }
+
+    #game-win-screen button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      background-color: #3498db;
+      color: white;
+      border-radius: 5px;
+      width: 100px; /* Set button width */
+    }
+
+    #game-win-screen button:hover {
+      background-color: #2980b9;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="game-container">
+    <canvas class="game-canvas" width="352" height="198"></canvas>
+    <div class="view-mask"></div>
+    <div class="view-maskRight"></div>
+    <div class="view-maskTop"></div>
+    <div class="view-maskBottom"></div>
+    <div class="show-map"><img src="images/icons/Map.svg" alt="StreetLower" height="75"
+        width="120"></div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/utils.js"></script>
+  <script src="/DirectionInput.js"></script>
+  <script src="/Overworld.js"></script>
+  <script src="/GameObject.js"></script>
+  <script src="/Person.js"></script>
+  <script src="/Sprite.js"></script>
+  <script src="/OverworldMap.js"></script>
+  <script src="/OverworldEvent.js"></script>
+  <script src="/TextMessage.js"></script>
+  <script src="/KeyPressListener.js"></script>
+
+  <!-- Main -->
+  <script src="/init.js"></script>
+
+  <script>
+    // Create game menu
+    const gameMenu = document.createElement('div');
+    gameMenu.classList.add('game-menu');
+    gameMenu.style.cssText = `
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 50px;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        display: none;
+    `;
+
+    const titleText = document.createElement('h1');
+    titleText.classList.add('title-text');
+    titleText.textContent = 'Steal and Escape';
+
+    const startBtn = document.createElement('button');
+    startBtn.textContent = 'Start';
+
+    // Attach the state object to the Overworld instance
+    startBtn.addEventListener('click', function () {
+      gameMenu.style.display = 'none';
+    });
+
+    gameMenu.appendChild(titleText);
+    gameMenu.appendChild(startBtn);
+
+    document.body.appendChild(gameMenu);
+
+    // Show game menu immediately when the page is loaded
+    document.addEventListener('DOMContentLoaded', function () {
+      gameMenu.style.display = 'block';
+    });
+
+       // Game end screen
+       const gameEndScreen = document.createElement('div');
+    gameEndScreen.id = 'game-end-screen';
+    gameEndScreen.style.display = 'none'; // Initially hidden
+    gameEndScreen.innerHTML = `
+      <h1>Game Over</h1>
+      <button onclick="restartGame()">Restart</button>
+    `;
+
+  </script>
+  
+  <div id="game-end-screen" style="display: none;">
+    <h1>Game Over</h1>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+  
+  <div id="game-win-screen" style="display: none;">
+    <h1>You Win!!</h1>
+    <button onclick="restartGame()">Restart</button>
+  </div>
+
+</body>
+
+</html>
